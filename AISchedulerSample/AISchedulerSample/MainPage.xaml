@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:aiassistview="clr-namespace:Syncfusion.Maui.AIAssistView;assembly=Syncfusion.Maui.AIAssistView"
+             xmlns:scheduler="clr-namespace:Syncfusion.Maui.Scheduler;assembly=Syncfusion.Maui.Scheduler"
+             xmlns:buttons="clr-namespace:Syncfusion.Maui.Buttons;assembly=Syncfusion.Maui.Buttons"
+             xmlns:local="clr-namespace:AISchedulerSample"
+             x:Class="AISchedulerSample.MainPage">
+
+    <ContentPage.BindingContext>
+        <local:SchedulerViewModel x:Name="viewModel"/>
+    </ContentPage.BindingContext>
+
+    <ContentPage.Resources>
+        <local:SfImageSourceConverter x:Key="imageConverter"/>
+    </ContentPage.Resources>
+
+    <Grid>
+        <scheduler:SfScheduler x:Name="scheduler" View="TimelineDay"
+                               AppointmentsSource="{Binding appointments}">
+            <scheduler:SfScheduler.TimelineView>
+                <scheduler:SchedulerTimelineView StartHour="9" TimeInterval="0:30:0" 
+                                                 TimeIntervalWidth="90" TimeFormat="hh:mm" 
+                                                 EndHour="18" />
+            </scheduler:SfScheduler.TimelineView>
+
+            <scheduler:SfScheduler.ResourceView>
+                <scheduler:SchedulerResourceView Resources="{Binding Resources}">
+                    <scheduler:SchedulerResourceView.Mapping>
+                        <scheduler:SchedulerResourceMapping Name="Name" Id="Id"
+                                                            Background="Background"
+                                                            Foreground="Foreground" />
+                    </scheduler:SchedulerResourceView.Mapping>
+
+                    <scheduler:SchedulerResourceView.HeaderTemplate>
+                        <DataTemplate>
+                            <StackLayout Padding="5" Orientation="Vertical"
+                         VerticalOptions="Center" HorizontalOptions="Fill">
+                                <Grid>
+                                    <Border StrokeThickness="2" Background="{Binding Background}"
+                                            HorizontalOptions="Center" HeightRequest="65"
+                                            WidthRequest="65">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="150" />
+                                        </Border.StrokeShape>
+                                    </Border>
+
+                                    <Image WidthRequest="50" HeightRequest="50" Aspect="Fill" 
+                                           HorizontalOptions="Center" VerticalOptions="Center"
+                                           Source="{Binding DataItem.ImageName, Converter={StaticResource imageConverter}}"/>
+                                </Grid>
+
+                                <Label Text="{Binding Name}" FontSize="10"
+                                       VerticalTextAlignment="Center"
+                                       HorizontalTextAlignment="Center" />
+                            </StackLayout>
+                        </DataTemplate>
+                    </scheduler:SchedulerResourceView.HeaderTemplate>
+                </scheduler:SchedulerResourceView>
+            </scheduler:SfScheduler.ResourceView>
+        </scheduler:SfScheduler>
+
+        <aiassistview:SfAIAssistView x:Name="aiAssistView" Grid.Column="0" Margin="0,100,0,0"
+                                     IsVisible="{Binding ShowAssistView, Mode=TwoWay}"
+                                     HorizontalOptions="Fill" ShowHeader="{Binding ShowHeader}"
+                                     AssistItems="{Binding Messages}">
+            <aiassistview:SfAIAssistView.Behaviors>
+                <local:AssistViewBehavior SchedulerViewModel="{x:Reference viewModel}" 
+                                          Scheduler="{x:Reference scheduler}" />
+            </aiassistview:SfAIAssistView.Behaviors>
+            <aiassistview:SfAIAssistView.HeaderTemplate>
+                <DataTemplate>
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="How can I assist with your healthcare needs?" Padding="0,20,0,0"  
+                               LineBreakMode="WordWrap" FontSize="Subtitle" HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+                </DataTemplate>
+            </aiassistview:SfAIAssistView.HeaderTemplate>
+            <aiassistview:SfAIAssistView.Shadow>
+                <Shadow Brush="Black" Offset="0,0" Radius="1" Opacity="0.5" />
+            </aiassistview:SfAIAssistView.Shadow>
+        </aiassistview:SfAIAssistView>
+
+        <buttons:SfButton x:Name="aibutton" Text="&#xe7e1;" CornerRadius="5" 
+                          BackgroundColor="#CAC4D0" FontSize="15" WidthRequest="30" 
+                          HeightRequest="30" FontFamily="MauiSampleFontIcon" 
+                          ToolTipProperties.Text="Click to open AI assistant"  
+                          Margin="8,13" FontAttributes="Bold" VerticalOptions="Start"
+                          HorizontalOptions="End" Clicked="aibutton_Clicked"/>
+
+        <Border x:Name="headerView" IsVisible="False" BackgroundColor="#F7F2FB" 
+                Margin="0,50" VerticalOptions="Start" StrokeThickness="0.4" Stroke="Gray">
+            <Grid RowDefinitions="auto,auto" >
+                <Grid ColumnDefinitions="*,Auto" HeightRequest="50">
+                    <Label Grid.Column="0" Text="AI Assistant" FontSize="16" FontFamily="Roboto-Medium" 
+                           Padding="16,0,0,0" FontAttributes="Bold" VerticalOptions="Center"/>
+                </Grid>
+            </Grid>
+        </Border>
+    </Grid>
+
+</ContentPage>
